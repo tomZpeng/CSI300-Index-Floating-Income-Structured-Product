@@ -1,6 +1,6 @@
 # CSI300-Index-Floating-Income-Structured-Product
 - Designed/Customized two structured product 1 and 2, and use the actual distirbution to do Monte Carlo Simulation, then esimate the two products' distributions of the Total return at maturity. So clients can see what the profitbility will be like. 
-- Data Source for CSI Daily Price: Refinitiv, from 2005-01-11 to 2021-12-30
+- Data Source for CSI Daily Price: Refinitiv, from 2005-01-11 to 2021-12-30. Attached EXCEL file.
 
 
 # Two structured product: Product 1 and Product 2

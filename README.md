@@ -5,7 +5,7 @@
 
 # Two structured product: Product 1 and Product 2
 ## Product 1: 
-- The product maturity is 6 months (N = 120) 
+- The product maturity is 180 natural days (N = 128) 
 	- Executive price 1: (price_{T0}) * 95%
 	- Executive price 2: (price_{T0}) * 105%
 - Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
@@ -19,7 +19,7 @@
 - Total return at matrity = Fixed rate of income + Floating rate of income
     
 ## Product 2: 
-- The product maturity is 6 months (N = 120) 
+- The product maturity is 180 natural days (N = 128) 
 	- Executive price 1: (price_{T0}) * 95%
 	- Executive price 2: (price_{T0}) * 98%
 	- Executive price 2: (price_{T0}) * 102%

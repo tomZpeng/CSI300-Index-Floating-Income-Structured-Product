@@ -34,5 +34,6 @@
       
 ##  
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300.jpg?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/random_walk.jpg?raw=ture)
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/Product1.jpg?raw=ture)
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/Product2.jpg?raw=ture)

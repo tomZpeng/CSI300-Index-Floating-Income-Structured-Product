@@ -1,0 +1,474 @@
+---
+title: "Floating Income Structured Product - CSI 300 | by Zhizhong Peng"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+Designed two structured product: Product 1 and Product 2
+
+Product 1: 
+    The product maturity is 6 months (N = 120) 
+      Executive price 1: (price_{T0}) * 95%
+      Executive price 2: (price_{T0}) * 105%
+    Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
+    Calculation Rule of income at maturity: 
+      Fixed rate of income: 0.1%
+      Floating rate of income: (0% * M1 + 4.4% * M2 + 0% * M3) / N
+          M1: From T_0 to T_n, the number of the trading day as the CSI300's price-closed lower or equal to Executive price 1
+          M2: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1 and lower the Executive price 2
+          M3: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1
+          N: From T_0 to T_n, the number of trading day
+      Total return at matrity = Fixed rate of income + Floating rate of income
+    
+Product 2: 
+    The product maturity is 6 months (N = 120) 
+      Executive price 1: (price_{T0}) * 95%
+      Executive price 2: (price_{T0}) * 98%
+      Executive price 2: (price_{T0}) * 102%
+      Executive price 2: (price_{T0}) * 105%
+    Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
+    Calculation Rule of income at maturity: 
+      Fixed rate of income: 0.1%
+      Floating rate of income: (0% * M1 + 3% * M2 + 5.9% * M3 + 3% * M4 + 0% * M5) / N
+          M1: From T_0 to T_n, the number of the trading day as the CSI300's price-closed lower or equal to Executive price 1
+          M2: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1 and lower the Executive price 2
+          M2: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 2 and lower the Executive price 3
+          M3: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 4
+          N: From T_0 to T_n, the number of trading day
+      Total return at matrity = Fixed rate of income + Floating rate of income
+
+```{r}
+library(xts) # to manipulate time series of stock data
+library(quantmod) # to download stock data
+library(rtsdata) # export xts to excel
+
+
+```
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(readxl)
+CSI300 <- readxl::read_excel("D:\\Desktop\\GF_Securities\\Price History_20211230_0914.xlsx", 
+                             #index = CSI300[,1], 
+                             col_type=c("date", "numeric","numeric","numeric",
+                                        "numeric","numeric","numeric","numeric",
+                                        "numeric","numeric","numeric","numeric",
+                                        "numeric","numeric","numeric","numeric"))[c(27:4160),c(1:10)]
+colnames(CSI300) <- readxl::read_excel("D:\\Desktop\\GF_Securities\\Price History_20211230_0914.xlsx")[c(26),c(1:10)]
+head(CSI300)
+str(CSI300)
+tail(CSI300)
+```
+
+
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+library(timetk)
+CSI300 <- timetk::tk_xts(CSI300, date_col = CSI300[,1])
+head(CSI300)
+tail(CSI300)
+
+
+
+data <- cbind(CSI300[,1], 
+              rollapplyr(CSI300[,3], width = 20, FUN = sd, na.rm = TRUE))
+
+
+
+par(fig=c(0,1,0,1), new=TRUE)
+plot.xts(data[,1], legend.loc = "topleft", col = "gray", mar = c(5, 2, 2, 5),
+         main="CSI 300 Price Chart (Daily Close)", type = "h", auto.grid = FALSE)
+par(fig=c(0,1,0,1), new=TRUE)
+plot.xts(data[,2], legend.loc = "topleft", col = 2, mar = c(5, 2, 2, 5),
+         main="CSI 300 Price Chart (30 Day rolling StdDev)", auto.grid = FALSE)
+
+
+
+
+
+
+```
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+library(timetk)
+CSI300 <- timetk::tk_xts(CSI300, date_col = CSI300[,1])
+head(CSI300)
+tail(CSI300)
+
+#####################################################
+data <- CSI300[,3]
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+hist(data, breaks = 512, 
+     probability=TRUE, border=FALSE, xaxt="n", ylab = "Density (%)",
+     main = "",xlab="",
+     sub = paste0("Mean=",round(mean(data)*100,3),"%",
+                  ", StdDev=",round(sd(data*100),3),"%",
+                  ", Median=",round(median(data*100),3),"%",
+                  ", Mode=",round(getmode(data*100),3),"%",
+                  ", Skew=",round(skewness(data),3),
+                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", \nMax=",round(max(data)*100,3),"%",
+                  ", Min=",round(min(data)*100,3),"%",
+                  ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
+                  ", PCTL5%=",round(quantile(data, 0.05)*100,3),"%")) # Histogram
+title(main = "Probability Density Plot of CSI 300 (Daily Reward)", xlab="Daily Reward", adj = 0)
+axis(side=1, at=pretty(x=data,n=22), 
+     lab=paste0(pretty(data,n=22) * 100,"%"), las=1) # x tick
+
+(kernels <- eval(formals(density.default)$kernel))
+bw <- bw.SJ(as.vector(data)) ## sensible automatic choice
+for(i in 1:length(kernels)) {
+   lines(density(as.vector(data), bw = bw, kernel = kernels[i]), col = Tol18rainbow[i])}
+lines(density(data, bw=bw, kernel="gaussian"),col="blue",pch=22, lwd=3) # Actual Density (KDE)
+
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+grid(nx = NULL, ny = NA, lty = 1, col = "gray", lwd = 1)
+
+x <- seq(min(data), max(data), length = length(data))
+f <- dnorm(x, mean = mean(data), sd = sd(data))
+lines(x, f, col = "red", lwd = 3) # Normal
+
+legend("topright", c("Actual Histogram", paste0("Actual Density (Gaussian KDE), \nBandwidth=",bw), 
+                     paste0("Normal(","Mean=",round(mean(data)*100,3),"%",
+                            ", StdDev=",round(sd(data),3),"%)")), 
+       box.lty = 3, lty = 1, ,bty="n", col = c("black", "blue", "red"), lwd = c(1, 3, 3))
+abline(v = getmode(data), col = "cyan",lty = 3)
+abline(v = quantile(data, 0.05), col = "Black",lty = 3)
+abline(v = quantile(data, 0.95), col = "Black",lty = 3)
+abline(v = median(data), col = "Green",lty = 3)
+abline(v = mean(data), col = "Purple",lty = 3)
+abline(v = quantile(data, c(0.25, 0.75)), col = "Orange",lty = 3)
+boxplot(data, add=TRUE,horizontal=TRUE,at=-1.0,col = "lightgray",
+        border="black",boxwex=2.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+
+#####################################################
+
+
+
+CSI300stdev20 <- na.omit(rollapplyr(CSI300[,3], width = 20, FUN = sd, na.rm = TRUE))
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+
+hist(CSI300stdev20, breaks = 512, xaxt="n", freq=FALSE, border=FALSE, ylab = "Density (%)",
+     main = "", xlab="",right=TRUE, 
+     sub = paste0("Mean=",round(mean(CSI300stdev20)*100,3),"%",
+                  ", StdDev=",round(sd(CSI300stdev20*100),3),"%",
+                  ", Median=",round(median(CSI300stdev20*100),3),"%",
+                  ", Mode=",round(getmode(CSI300stdev20*100),3),"%",
+                  ", Skew=",round(skewness(CSI300stdev20),3),
+                  ", Kurt=",round(kurtosis(CSI300stdev20),3),"+3",
+                  ", \nMax=",round(max(CSI300stdev20)*100,3),"%",
+                  ", Min=",round(min(CSI300stdev20)*100,3),"%",
+                  ", PCTL95%=",round(quantile(CSI300stdev20, 0.95)*100,3),"%",
+                  ", PCTL5%=",round(quantile(CSI300stdev20, 0.05)*100,3),"%")) # Histogram)
+title(main = "Probability Density Plot of CSI 300 (30 day Hist StdDev)", xlab="30 Day rolling StdDev", adj = 0)
+axis(side=1, at=pretty(x=CSI300stdev20,n=20), 
+     lab=paste0(pretty(CSI300stdev20,n=20) * 100,"%"), las=2) # x tick
+
+(kernels <- eval(formals(density.default)$kernel))
+bw <- bw.SJ(as.vector(CSI300stdev20)) ## sensible automatic choice
+for(i in 1:length(kernels)) {
+   lines(density(as.vector(CSI300stdev20), bw = bw, kernel = kernels[i]), col = Tol18rainbow[i])}
+lines(density(CSI300stdev20, bw=bw, kernel="gaussian"),col="blue",pch=22, lwd=3) # Actual Density (KDE)
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+grid(nx = NULL, ny = NA, lty = 1, col = "gray", lwd = 1)
+legend("topright", c("Actual Histogram", paste0("Actual Density (Gaussian KDE), \nBandwidth=",bw)), 
+       box.lty = 3, lty = 1, ,bty="n", col = c("black", "blue"), lwd = c(1, 3))
+abline(v = getmode(CSI300stdev20), col = "cyan",lty = 3)
+abline(v = quantile(CSI300stdev20, 0.05), col = "Black",lty = 3)
+abline(v = quantile(CSI300stdev20, 0.95), col = "Black",lty = 3)
+abline(v = median(CSI300stdev20), col = "Green",lty = 3)
+abline(v = mean(CSI300stdev20), col = "Purple",lty = 3)
+abline(v = quantile(CSI300stdev20, c(0.25, 0.75)), col = "Orange",lty = 3)
+boxplot(CSI300stdev20, add=TRUE,horizontal=TRUE,at=-2,col = "lightgray",
+        border="black",boxwex=5.0,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+
+
+#####################################################
+
+
+# QQ plot
+#qqnorm(data,breaks = 100, main="QQ Plot of CSI 300", pch=19)
+#qqline(data)
+#grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+
+
+#####################################################
+## Performs the Shapiro-Wilk test of normality.
+# Hypothesis test for a test of normality
+# Null hypothesis: The data is normally distributed. If p> 0.05, normality can be assumed.
+shapiro.test(as.vector(data))
+# For the CSI 300 Daliy Close data, p < 2.2e-16 suggesting strong evidence of 
+# non-normality and non-parametric test should be used 
+density(data)
+str(density(data))
+
+# Find the best and worest day
+find_the_point <- min(data)
+round(CSI300[min(which.min(abs(data - find_the_point))),3],3)
+find_the_point <- max(data)
+round(CSI300[min(which.min(abs(data - find_the_point))),3],3)
+
+
+#####################################################
+#(kernels <- eval(formals(density.default)$kernel))
+#bw <- bw.SJ(as.vector(data)) ## sensible automatic choice
+#plot(density(data, bw=bw)$x, density(data, bw=bw)$y, col="Blue")
+
+#bw <- bw.SJ(as.vector(CSI300stdev20)) ## sensible automatic choice
+#points(density(CSI300stdev20, bw=bw)$x, density(CSI300stdev20, bw=bw)$y, col="Red")
+
+#####################################################
+#hist(density(data, bw=bw)$x, breaks = 100, )
+```
+
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+#####################################################
+#####################################################
+#####################################################
+# Create data.
+data <- CSI300[,3]
+x <- data
+# `dx` is the density function, used later for plotting. 
+# If we able to find the perfect distirbution
+# dx <- function(x) (dnorm(x) + dnorm(x, 4, 1/4) + dnorm(x, 8, 1/4))/3
+# Compute a kernel density estimate.
+# It returns a kernel width in $bw as well as $x and $y vectors for plotting.
+(kernels <- eval(formals(density.default)$kernel))
+bw <- bw.SJ(as.vector(x)) ## sensible automatic choice
+#plot(density(x, bw=bw)$x, density(x, bw=bw)$y, col="Blue")
+z <- density(x, bw=bw, kernel="gaussian")
+##### Sample from the KDE.
+# Define a function to sample from the density.
+# This one implements only a Gaussian kernel.
+rdens <- function(n, density=z, data=x, kernel="gaussian") {
+  width <- z$bw                              # Kernel width
+  rkernel <- function(n) rnorm(n, sd=width)  # Kernel sampler
+  sample(x, n, replace=TRUE) + rkernel(n)    # Here's the entire algorithm
+}
+# simulation (sampling)
+n <- 1000000
+#set.seed(888)
+system.time(y <- rdens(n, z, x)) # Millions per second
+# Plot the sample.
+h.density <- hist(y, breaks=512, plot=TRUE)
+
+
+#####################################################
+data <- y
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+hist(data, breaks = 512, 
+     probability=TRUE, border=FALSE, xaxt="n", ylab = "Density (%)",
+     main = "",xlab="",
+     sub = paste0("Mean=",round(mean(data)*100,3),"%",
+                  ", StdDev=",round(sd(data*100),3),"%",
+                  ", Median=",round(median(data*100),3),"%",
+                  ", Mode=",round(getmode(data*100),3),"%",
+                  ", Skew=",round(skewness(data),3),
+                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", \nMax=",round(max(data)*100,3),"%",
+                  ", Min=",round(min(data)*100,3),"%",
+                  ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
+                  ", PCTL5%=",round(quantile(data, 0.05)*100,3),"%")) # Histogram
+title(main = paste0("Simulated Probability Density Plot of CSI 300 (Daily Reward), n=",n), xlab="Daily Reward", adj = 0)
+axis(side=1, at=pretty(x=data,n=22), 
+     lab=paste0(pretty(data,n=22) * 100,"%"), las=1) # x tick
+
+
+for(i in 1:length(kernels)) {
+   lines(density(as.vector(data), bw = bw, kernel = kernels[i]), col = Tol18rainbow[i])}
+lines(density(data, bw=bw, kernel="gaussian"),col="blue",pch=22, lwd=3) # Actual Density (KDE)
+
+grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
+grid(nx = NULL, ny = NA, lty = 1, col = "gray", lwd = 1)
+
+x <- seq(min(data), max(data), length = length(data))
+f <- dnorm(x, mean = mean(data), sd = sd(data))
+lines(x, f, col = "red", lwd = 3) # Normal
+
+legend("topright", c("Actual Histogram", paste0("Actual Density (Gaussian KDE), \nBandwidth=",bw), 
+                     paste0("Normal(","Mean=",round(mean(data)*100,3),"%",
+                            ", StdDev=",round(sd(data),3),"%)")), 
+       box.lty = 3, lty = 1, ,bty="n", col = c("black", "blue", "red"), lwd = c(1, 3, 3))
+abline(v = getmode(data), col = "cyan",lty = 3)
+abline(v = quantile(data, 0.025), col = "Black",lty = 3)
+abline(v = quantile(data, 0.975), col = "Black",lty = 3)
+abline(v = median(data), col = "Green",lty = 3)
+abline(v = mean(data), col = "Purple",lty = 3)
+abline(v = quantile(data, c(0.25, 0.75)), col = "Orange",lty = 3)
+boxplot(data, add=TRUE,horizontal=TRUE,at=-0.95,col = "lightgray",
+        border="black",boxwex=2.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+
+#####################################################
+
+```
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+#####################################################
+#####################################################
+#####################################################
+
+
+# Create data.
+data <- CSI300[,3]
+x <- as.vector(data)
+# `dx` is the density function, used later for plotting. 
+# If we able to find the perfect distirbution
+# dx <- function(x) (dnorm(x) + dnorm(x, 4, 1/4) + dnorm(x, 8, 1/4))/3
+# Compute a kernel density estimate.
+# It returns a kernel width in $bw as well as $x and $y vectors for plotting.
+(kernels <- eval(formals(density.default)$kernel))
+bw <- bw.SJ(as.vector(x)) ## sensible automatic choice
+#plot(density(x, bw=bw)$x, density(x, bw=bw)$y, col="Blue")
+z <- density(x, bw=bw, kernel="gaussian")
+
+##### Sample from the KDE.
+# Define a function to sample from the density.
+# This one implements only a Gaussian kernel.
+rdens <- function(n, density=z, data=x, kernel="gaussian") {
+  width <- z$bw                              # Kernel width
+  rkernel <- function(n) rnorm(n, sd=width)  # Kernel sampler
+  sample(x, n, replace=TRUE) + rkernel(n)    # Here's the entire algorithm
+}
+# simulation (sampling)
+n <- 120
+m <- 10^6
+df <- matrix(ncol = n, nrow = m)
+
+for (i in 1:m) {
+  #set.seed(888)
+  y <- rdens(n, z, x) # Millions per second
+  # Plot the sample.
+  #h.density <- hist(y, breaks=512, plot=TRUE)
+  df[i,] <- t(y)
+}
+
+
+df <- data.frame(t(df))
+for (i in 1:nrow(df)) {
+  rownames(df)[[i]] <- (as.Date("2021-12-31", origin = "1899-12-30") + i+25568)
+}
+rownames(df) <- as.Date(as.double(rownames(df)), origin = "1899-12-30")
+#head(df)
+#tail(df)
+
+```
+
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+df1 <- df
+df1 <- as.xts(df1)
+cum_return <- cumprod(1 + df1)
+```
+
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+library(scales)
+plot(cum_return, col = scales::alpha("blue", 0.01))
+
+#####################################################
+```
+
+```{r results='hide'}
+# Product 1
+p1m1 <- matrix(ncol = 0, nrow = ncol(cum_return))
+p1m2 <- matrix(ncol = 0, nrow = ncol(cum_return))
+p1m3 <- matrix(ncol = 0, nrow = ncol(cum_return))
+# Product 2
+p2m1 <- matrix(ncol = 0, nrow = ncol(cum_return))
+p2m2 <- matrix(ncol = 0, nrow = ncol(cum_return))
+p2m3 <- matrix(ncol = 0, nrow = ncol(cum_return))
+p2m4 <- matrix(ncol = 0, nrow = ncol(cum_return))
+p2m5 <- matrix(ncol = 0, nrow = ncol(cum_return))
+
+for (i in 1:ncol(cum_return)) {
+  # Product 1
+  p1m1[i] <- sum( cum_return[,i] <= 0.95, na.rm=TRUE)
+  p1m2[i] <- sum( cum_return[,i] > 0.95 & cum_return[,i] <= 1.05, na.rm=TRUE)
+  p1m3[i] <- sum( cum_return[,i] > 1.05, na.rm=TRUE)
+  # Product 2
+  p2m1[i] <- sum( cum_return[,i] <= 0.95, na.rm=TRUE)
+  p2m2[i] <- sum( cum_return[,i] > 0.95 & cum_return[,i] <= 0.98, na.rm=TRUE)
+  p2m3[i] <- sum( cum_return[,i] > 0.98 & cum_return[,i] <= 1.02, na.rm=TRUE)
+  p2m4[i] <- sum( cum_return[,i] > 1.02 & cum_return[,i] <= 1.05, na.rm=TRUE)
+  p2m5[i] <- sum( cum_return[,i] > 1.05, na.rm=TRUE)
+}
+```
+
+
+
+```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
+#rproduct1 <- (p1m1*0 + p1m2*0.044 + p1m3*0 + 0.001)/nrow(cum_return)
+data <- rproduct1
+hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=TRUE,
+     sub = paste0("Mean=",round(mean(data)*100,3),"%",
+                  ", StdDev=",round(sd(data*100),3),"%",
+                  ", Median=",round(median(data*100),3),"%",
+                  ", Mode=",round(getmode(data*100),3),"%",
+                  ", Skew=",round(skewness(data),3),
+                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", \nMax=",round(max(data)*100,3),"%",
+                  ", Min=",round(min(data)*100,3),"%",
+                  ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
+                  ", PCTL5%=",round(quantile(data, 0.05)*100,3),"%")) # Histogram)
+title(main = paste0("Simulated Histogram of Product 1 Return, n=",length(data)), xlab="Total Return", adj = 0)
+axis(side=1, at=pretty(x=data,n=22), 
+     lab=paste0(pretty(data,n=22) * 100,"%"), las=2) # x tick
+
+abline(v = getmode(data), col = "cyan",lty = 3)
+abline(v = quantile(data, 0.025), col = "Black",lty = 3)
+abline(v = quantile(data, 0.975), col = "Black",lty = 3)
+abline(v = median(data), col = "Green",lty = 3)
+abline(v = mean(data), col = "Purple",lty = 3)
+abline(v = quantile(data, c(0.25, 0.75)), col = "Orange",lty = 3)
+boxplot(data, add=TRUE,horizontal=TRUE,at=-1.25,col = "lightgray",
+        border="black",boxwex=3.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+
+
+
+#rproduct2 <- (p2m1*0 + p2m2*0.03 + p2m3*0.059 + p2m4*0.003 + p2m5*0 + 0.001)/nrow(cum_return)
+data <- rproduct2
+hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=TRUE,
+     sub = paste0("Mean=",round(mean(data)*100,3),"%",
+                  ", StdDev=",round(sd(data*100),3),"%",
+                  ", Median=",round(median(data*100),3),"%",
+                  ", Mode=",round(getmode(data*100),3),"%",
+                  ", Skew=",round(skewness(data),3),
+                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", \nMax=",round(max(data)*100,3),"%",
+                  ", Min=",round(min(data)*100,3),"%",
+                  ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
+                  ", PCTL5%=",round(quantile(data, 0.05)*100,3),"%")) # Histogram)
+title(main = paste0("Simulated Histogram of Product 2 Return, n=",length(data)), xlab="Total Return", adj = 0)
+axis(side=1, at=pretty(x=data,n=22), 
+     lab=paste0(pretty(data,n=22) * 100,"%"), las=2) # x tick
+
+abline(v = getmode(data), col = "cyan",lty = 3)
+abline(v = quantile(data, 0.025), col = "Black",lty = 3)
+abline(v = quantile(data, 0.975), col = "Black",lty = 3)
+abline(v = median(data), col = "Green",lty = 3)
+abline(v = mean(data), col = "Purple",lty = 3)
+abline(v = quantile(data, c(0.25, 0.75)), col = "Orange",lty = 3)
+boxplot(data, add=TRUE,horizontal=TRUE,at=-1.25,col = "lightgray",
+        border="black",boxwex=3.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+```
+
+
+
+
+
+
+

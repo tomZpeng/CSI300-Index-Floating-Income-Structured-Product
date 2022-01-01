@@ -1,9 +1,9 @@
 # CSI300-Index-Floating-Income-Structured-Product
 
 ## Designed two structured product: Product 1 and Product 2, 
-## and use the actual distirbution to do Monte Carlo Simulation and esimate the distribution of the Total return at matrity, which the client really care.
+###  and use the actual distirbution to do Monte Carlo Simulation and esimate the distribution of the Total return at matrity, which the client really care.### 
   <br>
-### Product 1:    <br>
+### Product 1:   ###  <br>
     The product maturity is 6 months (N = 120)  <br>
       Executive price 1: (price_{T0}) * 95%  <br>
       Executive price 2: (price_{T0}) * 105%
@@ -17,7 +17,7 @@
           N: From T_0 to T_n, the number of trading day  <br>
       Total return at matrity = Fixed rate of income + Floating rate of income  <br>
       <br>
-### Product 2:   <br>
+### Product 2:   ###<br>
     The product maturity is 6 months (N = 120)   <br>
       Executive price 1: (price_{T0}) * 95%  <br>
       Executive price 2: (price_{T0}) * 98%  <br>

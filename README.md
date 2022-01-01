@@ -1,6 +1,7 @@
 # CSI300-Index-Floating-Income-Structured-Product
 
-## Designed two structured product: Product 1 and Product 2 <br>
+## Designed two structured product: Product 1 and Product 2, 
+## and use the actual distirbution to do Monte Carlo Simulation and esimate the distribution of the Total return at matrity, which the client really care.
   <br>
 ### Product 1:    <br>
     The product maturity is 6 months (N = 120)  <br>

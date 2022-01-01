@@ -1,5 +1,5 @@
 # CSI300-Index-Floating-Income-Structured-Product
-
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300.jpg?raw=ture)
 # Designed two structured product Product 1 and Product 2, and use the actual distirbution to do Monte Carlo Simulation, then esimate the distribution of the two products' Total return at maturity, that clients care 
 
 ### Product 1:    

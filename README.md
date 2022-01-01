@@ -15,7 +15,7 @@
           M3: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1  
           N: From T_0 to T_n, the number of trading day  
       Total return at matrity = Fixed rate of income + Floating rate of income  
-      <br>
+
 ### Product 2:  
     The product maturity is 6 months (N = 120)   
       Executive price 1: (price_{T0}) * 95% 

@@ -35,7 +35,7 @@
 		- N: From T0 to Tn, the number of trading day
 - Total return at matrity = Fixed rate of income + Floating rate of income
       
-##  
+# CSI Index Overview 
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_hist.png?raw=ture) 
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_hist_vol.png?raw=ture)
 ## 
@@ -43,7 +43,7 @@
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_dist.png?raw=ture)
 
 ## 
-
+# Products Simulation 
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_random_walk1.png?raw=ture)
 
 ## 

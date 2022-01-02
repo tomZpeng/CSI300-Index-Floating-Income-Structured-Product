@@ -1,49 +1,51 @@
 ---
 title: "Floating Income Structured Product - CSI 300 | by Zhizhong Peng"
-output:
-  html_document:
-    df_print: paged
+output: html_document
 ---
 
+# Designed two structured product: Product 1 and Product 2
+- Designed/Customized two structured product 1 and 2, and use the actual distirbution to do Monte Carlo Simulation, then esimate the two products' distributions of the Total return at maturity. So clients can see what the profitbility will be like. 
 
-Designed two structured product: Product 1 and Product 2
-
-Product 1: 
-    The product maturity is 6 months (N = 120) 
-      Executive price 1: (price_{T0}) * 95%
-      Executive price 2: (price_{T0}) * 105%
-    Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
-    Calculation Rule of income at maturity: 
-      Fixed rate of income: 0.1%
-      Floating rate of income: (0% * M1 + 4.4% * M2 + 0% * M3) / N
-          M1: From T_0 to T_n, the number of the trading day as the CSI300's price-closed lower or equal to Executive price 1
-          M2: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1 and lower the Executive price 2
-          M3: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1
-          N: From T_0 to T_n, the number of trading day
-      Total return at matrity = Fixed rate of income + Floating rate of income
+## Two structured product: Product 1 and Product 2
+ 
+### Product 1: 
+- The product maturity is 180 natural days (N = 128) 
+	- Strike price 1: (price_{T0}) * 95%
+	- Strike price 2: (price_{T0}) * 105%
+- Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
+- Calculation Rule of income at maturity: 
+	- Fixed rate of income: 0.1%
+	- Floating rate of income: (0% * M1 + 4.4% * M2 + 0% * M3) / N
+  	- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
+  	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
+  	- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1
+  	- N: From T0 to Tn, the number of trading day
+- Total return at matrity = Fixed rate of income + Floating rate of income
     
-Product 2: 
-    The product maturity is 6 months (N = 120) 
-      Executive price 1: (price_{T0}) * 95%
-      Executive price 2: (price_{T0}) * 98%
-      Executive price 2: (price_{T0}) * 102%
-      Executive price 2: (price_{T0}) * 105%
-    Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
-    Calculation Rule of income at maturity: 
-      Fixed rate of income: 0.1%
-      Floating rate of income: (0% * M1 + 3% * M2 + 5.9% * M3 + 3% * M4 + 0% * M5) / N
-          M1: From T_0 to T_n, the number of the trading day as the CSI300's price-closed lower or equal to Executive price 1
-          M2: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 1 and lower the Executive price 2
-          M2: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 2 and lower the Executive price 3
-          M3: From T_0 to T_n, the number of the trading day as the CSI300's price-closed over to Executive price 4
-          N: From T_0 to T_n, the number of trading day
-      Total return at matrity = Fixed rate of income + Floating rate of income
+### Product 2: 
+- The product maturity is 180 natural days (N = 128) 
+	- Strike price 1: (price_{T0}) * 95%
+	- Strike price 2: (price_{T0}) * 98%
+	- Strike price 3: (price_{T0}) * 102%
+	- Strike price 4: (price_{T0}) * 105%
+- Target Index: .CSI300 (China Shanghai Shenzhen 300 Index)
+- Calculation Rule of income at maturity: 
+	- Fixed rate of income: 0.1%
+	- Floating rate of income: (0% * M1 + 3% * M2 + 5.9% * M3 + 3% * M4 + 0% * M5) / N
+  	- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
+  	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
+  	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 2 and lower the Strike price 3
+  	- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 4
+  	- N: From T0 to Tn, the number of trading day
+- Total return at matrity = Fixed rate of income + Floating rate of income
 
 ```{r}
 library(xts) # to manipulate time series of stock data
-library(quantmod) # to download stock data
 library(rtsdata) # export xts to excel
-
+Tol18rainbow = c("#771155","#AA4488","#CC99BB","#114477","#4477AA", 
+                 "#77AADD","#117777","#44AAAA","#77CCCC","#777711", 
+                 "#AAAA44","#DDDD77","#774411","#AA7744","#DDAA77", 
+                 "#771122","#AA4455","#DD7788") 
 
 ```
 
@@ -72,10 +74,8 @@ head(CSI300)
 tail(CSI300)
 
 
-
 data <- cbind(CSI300[,1], 
               rollapplyr(CSI300[,3], width = 20, FUN = sd, na.rm = TRUE))
-
 
 
 par(fig=c(0,1,0,1), new=TRUE)
@@ -111,8 +111,8 @@ hist(data, breaks = 512,
                   ", StdDev=",round(sd(data*100),3),"%",
                   ", Median=",round(median(data*100),3),"%",
                   ", Mode=",round(getmode(data*100),3),"%",
-                  ", Skew=",round(skewness(data),3),
-                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", Skew=",round(e1071::skewness(data),3),
+                  ", Kurt=",round(e1071::kurtosis(data),3),"+3",
                   ", \nMax=",round(max(data)*100,3),"%",
                   ", Min=",round(min(data)*100,3),"%",
                   ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
@@ -137,7 +137,7 @@ lines(x, f, col = "red", lwd = 3) # Normal
 legend("topright", c("Actual Histogram", paste0("Actual Density (Gaussian KDE), \nBandwidth=",bw), 
                      paste0("Normal(","Mean=",round(mean(data)*100,3),"%",
                             ", StdDev=",round(sd(data),3),"%)")), 
-       box.lty = 3, lty = 1, ,bty="n", col = c("black", "blue", "red"), lwd = c(1, 3, 3))
+       box.lty = 3, lty = 1, bty="n", col = c("black", "blue", "red"), lwd = c(1, 3, 3))
 abline(v = getmode(data), col = "cyan",lty = 3)
 abline(v = quantile(data, 0.05), col = "Black",lty = 3)
 abline(v = quantile(data, 0.95), col = "Black",lty = 3)
@@ -164,8 +164,8 @@ hist(CSI300stdev20, breaks = 512, xaxt="n", freq=FALSE, border=FALSE, ylab = "De
                   ", StdDev=",round(sd(CSI300stdev20*100),3),"%",
                   ", Median=",round(median(CSI300stdev20*100),3),"%",
                   ", Mode=",round(getmode(CSI300stdev20*100),3),"%",
-                  ", Skew=",round(skewness(CSI300stdev20),3),
-                  ", Kurt=",round(kurtosis(CSI300stdev20),3),"+3",
+                  ", Skew=",round(e1071::skewness(CSI300stdev20),3),
+                  ", Kurt=",round(e1071::kurtosis(CSI300stdev20),3),"+3",
                   ", \nMax=",round(max(CSI300stdev20)*100,3),"%",
                   ", Min=",round(min(CSI300stdev20)*100,3),"%",
                   ", PCTL95%=",round(quantile(CSI300stdev20, 0.95)*100,3),"%",
@@ -182,7 +182,7 @@ lines(density(CSI300stdev20, bw=bw, kernel="gaussian"),col="blue",pch=22, lwd=3)
 grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
 grid(nx = NULL, ny = NA, lty = 1, col = "gray", lwd = 1)
 legend("topright", c("Actual Histogram", paste0("Actual Density (Gaussian KDE), \nBandwidth=",bw)), 
-       box.lty = 3, lty = 1, ,bty="n", col = c("black", "blue"), lwd = c(1, 3))
+       box.lty = 3, lty = 1 ,bty="n", col = c("black", "blue"), lwd = c(1, 3))
 abline(v = getmode(CSI300stdev20), col = "cyan",lty = 3)
 abline(v = quantile(CSI300stdev20, 0.05), col = "Black",lty = 3)
 abline(v = quantile(CSI300stdev20, 0.95), col = "Black",lty = 3)
@@ -277,8 +277,8 @@ hist(data, breaks = 512,
                   ", StdDev=",round(sd(data*100),3),"%",
                   ", Median=",round(median(data*100),3),"%",
                   ", Mode=",round(getmode(data*100),3),"%",
-                  ", Skew=",round(skewness(data),3),
-                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", Skew=",round(e1071::skewness(data),3),
+                  ", Kurt=",round(e1071::kurtosis(data),3),"+3",
                   ", \nMax=",round(max(data)*100,3),"%",
                   ", Min=",round(min(data)*100,3),"%",
                   ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
@@ -302,7 +302,7 @@ lines(x, f, col = "red", lwd = 3) # Normal
 legend("topright", c("Actual Histogram", paste0("Actual Density (Gaussian KDE), \nBandwidth=",bw), 
                      paste0("Normal(","Mean=",round(mean(data)*100,3),"%",
                             ", StdDev=",round(sd(data),3),"%)")), 
-       box.lty = 3, lty = 1, ,bty="n", col = c("black", "blue", "red"), lwd = c(1, 3, 3))
+       box.lty = 3, lty = 1 ,bty="n", col = c("black", "blue", "red"), lwd = c(1, 3, 3))
 abline(v = getmode(data), col = "cyan",lty = 3)
 abline(v = quantile(data, 0.025), col = "Black",lty = 3)
 abline(v = quantile(data, 0.975), col = "Black",lty = 3)
@@ -344,8 +344,8 @@ rdens <- function(n, density=z, data=x, kernel="gaussian") {
   sample(x, n, replace=TRUE) + rkernel(n)    # Here's the entire algorithm
 }
 # simulation (sampling)
-n <- 120
-m <- 10^6
+n <- 180
+m <- 10000
 df <- matrix(ncol = n, nrow = m)
 
 for (i in 1:m) {
@@ -365,22 +365,66 @@ rownames(df) <- as.Date(as.double(rownames(df)), origin = "1899-12-30")
 #head(df)
 #tail(df)
 
-```
+df <- df[lubridate::wday(rownames(df)) < 6,]
 
-
-```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
 df1 <- df
 df1 <- as.xts(df1)
 cum_return <- cumprod(1 + df1)
-```
 
-
-```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
 library(scales)
-plot(cum_return, col = scales::alpha("blue", 0.01))
 
-#####################################################
+
+pctl50 <- cum_return[,1]
+pctl95 <- cum_return[,1]
+pctl05 <- cum_return[,1]
+excu_95 <- cum_return[,1]
+excu_98 <- cum_return[,1]
+excu_102 <- cum_return[,1]
+excu_105 <- cum_return[,1]
+
+for (i in 1:nrow(cum_return[,1:ncol(cum_return)])) {
+  pctl95[i] <- quantile(cum_return[i,1:ncol(cum_return)], 0.95)
+  pctl05[i] <- quantile(cum_return[i,1:ncol(cum_return)], 0.05)
+  pctl50[i] <- quantile(cum_return[i,1:ncol(cum_return)], 0.50)
+  # product
+  excu_95[i] <- 1 * 0.95
+  excu_98[i] <- 1 * 0.98
+  excu_102[i] <- 1 * 1.02
+  excu_105[i] <- 1 * 1.05
+}
+
+
+ybounds <- function(y){  # y is the response variable in the dataframe
+  a = min(y) 
+  b = max(y) 
+    return( c(a, b) )
+}
+
+ybounds(pctl95)
+
+plot_only_show <- if (ncol(cum_return) >= 5) { 5 } else {ncol(cum_return)} 
+{ plot.xts(cum_return[,1:plot_only_show], 
+           ylim = ybounds(cbind(cum_return[,1:plot_only_show],pctl95,pctl05,pctl50,excu_95,excu_98,excu_102,excu_105)),
+           col = scales::alpha(c(Tol18rainbow), 0.8), # or Tol18rainbow
+           type="o", pch=19,
+           main = paste0("CSI300 Random Walk ", nrow(cum_return)," trading days , simulated ", m," times, only show first ", plot_only_show), 
+           xaxt='n',screens = 1)
+  lines(cbind(pctl95,pctl05), col = "red", on=1, lwd = 2)
+  lines(pctl50, col = "black", on=1, lwd = 2)
+  lines(cbind(excu_95,excu_98,excu_102,excu_105), col = "orange", on=1, lty=2, lwd = 3)
+  addLegend(legend.loc = 'topleft', legend.names = c("5% and 95% Percentile for all simulations",
+                                                     "50% Percentile for all simulations",
+                                                     "Product Strike price: 95%, 98%, 102%, 105%"), 
+            lwd = c(2,2,3), lty = c(1,1,2), col = c("red","black","orange")) } 
+
+
+
+
+
+
 ```
+
+
 
 ```{r results='hide'}
 # Product 1
@@ -406,20 +450,23 @@ for (i in 1:ncol(cum_return)) {
   p2m4[i] <- sum( cum_return[,i] > 1.02 & cum_return[,i] <= 1.05, na.rm=TRUE)
   p2m5[i] <- sum( cum_return[,i] > 1.05, na.rm=TRUE)
 }
+
+
 ```
 
 
 
 ```{r fig.width=12, fig.height=6, message=FALSE, warning=FALSE}
-#rproduct1 <- (p1m1*0 + p1m2*0.044 + p1m3*0 + 0.001)/nrow(cum_return)
+# paste0("Product 1 Total Return = " , p1m1," * 0% + ", p1m2,"* 4.4% + ", p1m3, "* 0%","+ 0.1% = ", rproduct1)
+rproduct1 <- (p1m1*0 + p1m2*0.044 + p1m3*0 + 0.001)/nrow(cum_return)
 data <- rproduct1
 hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=TRUE,
      sub = paste0("Mean=",round(mean(data)*100,3),"%",
                   ", StdDev=",round(sd(data*100),3),"%",
                   ", Median=",round(median(data*100),3),"%",
                   ", Mode=",round(getmode(data*100),3),"%",
-                  ", Skew=",round(skewness(data),3),
-                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", Skew=",round(e1071::skewness(data),3),
+                  ", Kurt=",round(e1071::kurtosis(data),3),"+3",
                   ", \nMax=",round(max(data)*100,3),"%",
                   ", Min=",round(min(data)*100,3),"%",
                   ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",
@@ -439,15 +486,15 @@ boxplot(data, add=TRUE,horizontal=TRUE,at=-1.25,col = "lightgray",
 
 
 
-#rproduct2 <- (p2m1*0 + p2m2*0.03 + p2m3*0.059 + p2m4*0.003 + p2m5*0 + 0.001)/nrow(cum_return)
+rproduct2 <- (p2m1*0 + p2m2*0.03 + p2m3*0.059 + p2m4*0.003 + p2m5*0 + 0.001)/nrow(cum_return)
 data <- rproduct2
 hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=TRUE,
      sub = paste0("Mean=",round(mean(data)*100,3),"%",
                   ", StdDev=",round(sd(data*100),3),"%",
                   ", Median=",round(median(data*100),3),"%",
                   ", Mode=",round(getmode(data*100),3),"%",
-                  ", Skew=",round(skewness(data),3),
-                  ", Kurt=",round(kurtosis(data),3),"+3",
+                  ", Skew=",round(e1071::skewness(data),3),
+                  ", Kurt=",round(e1071::kurtosis(data),3),"+3",
                   ", \nMax=",round(max(data)*100,3),"%",
                   ", Min=",round(min(data)*100,3),"%",
                   ", PCTL95%=",round(quantile(data, 0.95)*100,3),"%",

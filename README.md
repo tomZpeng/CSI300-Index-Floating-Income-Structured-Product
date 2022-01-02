@@ -12,10 +12,10 @@
 - Calculation Rule of income at maturity: 
 	- Fixed rate of income: 0.1%
 	- Floating rate of income: (0% * M1 + 4.4% * M2 + 0% * M3) / N
-	- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
-	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
-	- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1
-	- N: From T0 to Tn, the number of trading day
+		- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
+		- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
+		- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1
+		- N: From T0 to Tn, the number of trading day
 - Total return at matrity = Fixed rate of income + Floating rate of income
     
 ## Product 2: 
@@ -28,11 +28,11 @@
 - Calculation Rule of income at maturity: 
 	- Fixed rate of income: 0.1%
 	- Floating rate of income: (0% * M1 + 3% * M2 + 5.9% * M3 + 3% * M4 + 0% * M5) / N
-	- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
-	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
-	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 2 and lower the Strike price 3
-	- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 4
-	- N: From T0 to Tn, the number of trading day
+		- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
+		- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
+		- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 2 and lower the Strike price 3
+		- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 4
+		- N: From T0 to Tn, the number of trading day
 - Total return at matrity = Fixed rate of income + Floating rate of income
       
 ##  

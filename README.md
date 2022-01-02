@@ -44,7 +44,7 @@
 
 ## 
 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_random_walk.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_random_walk1.png?raw=ture)
 
 ## 
 

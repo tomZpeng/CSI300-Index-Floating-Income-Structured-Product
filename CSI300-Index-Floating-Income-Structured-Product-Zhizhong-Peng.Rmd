@@ -1,12 +1,13 @@
 ---
-title: "Floating Income Structured Product - CSI 300 | by Zhizhong Peng"
+title: "Principal-protected Floating-income Strucured product - CSI Index | by Zhizhong Peng"
 output: html_document
 ---
 
 # Designed two structured product: Product 1 and Product 2
-- Designed/Customized two structured product 1 and 2, and use the actual distirbution to do Monte Carlo Simulation, then esimate the two products' distributions of the Total return at maturity. So clients can see what the profitbility will be like. 
+- Designed/Customized two principal protected CSI Index floating income structured products (product 1 and 2), and use the actual distirbution to do Monte Carlo Simulation, then esimate the two products' distributions of the Total return at maturity. So financial advisors and clients can see what the profitability will be like.
+- Data Source for CSI Daily Price: Refinitiv, from 2005-01-11 to 2021-12-30. Attached EXCEL file.
 
-## Two structured product: Product 1 and Product 2
+## Principal-protected Floating-income Strucured product - CSI Index (Product 1 and Product 2)
  
 ### Product 1: 
 - The product maturity is 180 natural days (N = 128) 
@@ -16,10 +17,10 @@ output: html_document
 - Calculation Rule of income at maturity: 
 	- Fixed rate of income: 0.1%
 	- Floating rate of income: (0% * M1 + 4.4% * M2 + 0% * M3) / N
-  	- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
-  	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
-  	- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1
-  	- N: From T0 to Tn, the number of trading day
+		- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
+		- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed higher the Strike price 1 and lower the Strike price 2
+		- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed higher the  Strike price 1
+		- N: From T0 to Tn, the number of trading day
 - Total return at matrity = Fixed rate of income + Floating rate of income
     
 ### Product 2: 
@@ -32,11 +33,11 @@ output: html_document
 - Calculation Rule of income at maturity: 
 	- Fixed rate of income: 0.1%
 	- Floating rate of income: (0% * M1 + 3% * M2 + 5.9% * M3 + 3% * M4 + 0% * M5) / N
-  	- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
-  	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 1 and lower the Strike price 2
-  	- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 2 and lower the Strike price 3
-  	- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed over to Strike price 4
-  	- N: From T0 to Tn, the number of trading day
+		- M1: From T0 to Tn, the number of the trading day as the CSI300's price-closed lower or equal to Strike price 1
+		- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed higher the  Strike price 1 and lower the Strike price 2
+		- M2: From T0 to Tn, the number of the trading day as the CSI300's price-closed higher the  Strike price 2 and lower the Strike price 3
+		- M3: From T0 to Tn, the number of the trading day as the CSI300's price-closed higher the  Strike price 4
+		- N: From T0 to Tn, the number of trading day
 - Total return at matrity = Fixed rate of income + Floating rate of income
 
 ```{r}
@@ -409,7 +410,7 @@ plot_only_show <- if (ncol(cum_return) >= 5) { 5 } else {ncol(cum_return)}
            type="o", pch=19,
            main = paste0("CSI300 Random Walk ", nrow(cum_return)," trading days , simulated ", m," times, only show first ", plot_only_show), 
            xaxt='n',screens = 1)
-  lines(cbind(pctl95,pctl05), col = "red", on=1, lwd = 2)
+  lines(cbind(pctl95,pctl05), col = "blue", on=1, lwd = 2)
   lines(pctl50, col = "black", on=1, lwd = 2)
   lines(cbind(excu_95,excu_98,excu_102,excu_105), col = "orange", on=1, lty=2, lwd = 3)
   addLegend(legend.loc = 'topleft', legend.names = c("5% and 95% Percentile for all simulations",

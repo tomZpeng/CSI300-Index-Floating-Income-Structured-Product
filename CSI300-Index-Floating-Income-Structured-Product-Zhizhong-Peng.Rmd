@@ -80,10 +80,10 @@ data <- cbind(CSI300[,1],
 
 
 par(fig=c(0,1,0,1), new=TRUE)
-plot.xts(data[,1], legend.loc = "topleft", col = "gray", mar = c(5, 2, 2, 5),
+plot.xts(data[,1],  col = "gray", mar = c(5, 2, 2, 5),
          main="CSI 300 Price Chart (Daily Close)", type = "h", auto.grid = FALSE)
 par(fig=c(0,1,0,1), new=TRUE)
-plot.xts(data[,2], legend.loc = "topleft", col = 2, mar = c(5, 2, 2, 5),
+plot.xts(data[,2], col = 2, mar = c(5, 2, 2, 5),
          main="CSI 300 Price Chart (30 Day rolling StdDev)", auto.grid = FALSE)
 
 
@@ -289,8 +289,7 @@ axis(side=1, at=pretty(x=data,n=22),
      lab=paste0(pretty(data,n=22) * 100,"%"), las=1) # x tick
 
 
-for(i in 1:length(kernels)) {
-   lines(density(as.vector(data), bw = bw, kernel = kernels[i]), col = Tol18rainbow[i])}
+for(i in 1:length(kernels)) { lines(density(as.vector(data), bw = bw, kernel = kernels[i]), col = Tol18rainbow[i]) }
 lines(density(data, bw=bw, kernel="gaussian"),col="blue",pch=22, lwd=3) # Actual Density (KDE)
 
 grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
@@ -416,7 +415,7 @@ plot_only_show <- if (ncol(cum_return) >= 5) { 5 } else {ncol(cum_return)}
   addLegend(legend.loc = 'topleft', legend.names = c("5% and 95% Percentile for all simulations",
                                                      "50% Percentile for all simulations",
                                                      "Product Strike price: 95%, 98%, 102%, 105%"), 
-            lwd = c(2,2,3), lty = c(1,1,2), col = c("red","black","orange")) } 
+            lwd = c(2,2,3), lty = c(1,1,2), col = c("blue","black","orange")) } 
 
 
 

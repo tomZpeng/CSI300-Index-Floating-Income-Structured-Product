@@ -460,7 +460,7 @@ for (i in 1:ncol(cum_return)) {
 # paste0("Product 1 Total Return = " , p1m1," * 0% + ", p1m2,"* 4.4% + ", p1m3, "* 0%","+ 0.1% = ", rproduct1)
 rproduct1 <- (p1m1*0 + p1m2*0.044 + p1m3*0 + 0.001)/nrow(cum_return)
 data <- rproduct1
-hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=TRUE,
+hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=FALSE,
      sub = paste0("Mean=",round(mean(data)*100,3),"%",
                   ", StdDev=",round(sd(data*100),3),"%",
                   ", Median=",round(median(data*100),3),"%",
@@ -481,14 +481,14 @@ abline(v = quantile(data, 0.975), col = "Black",lty = 3)
 abline(v = median(data), col = "Green",lty = 3)
 abline(v = mean(data), col = "Purple",lty = 3)
 abline(v = quantile(data, c(0.25, 0.75)), col = "Orange",lty = 3)
-boxplot(data, add=TRUE,horizontal=TRUE,at=-1.25,col = "lightgray",
-        border="black",boxwex=3.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+boxplot(data, add=TRUE,horizontal=TRUE,at=-2.5,col = "lightgray",
+        border="black",boxwex=4.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
 
 
 
 rproduct2 <- (p2m1*0 + p2m2*0.03 + p2m3*0.059 + p2m4*0.003 + p2m5*0 + 0.001)/nrow(cum_return)
 data <- rproduct2
-hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=TRUE,
+hist(data, breaks = 300, xaxt="n",xlab="",main = "",probability=FALSE,
      sub = paste0("Mean=",round(mean(data)*100,3),"%",
                   ", StdDev=",round(sd(data*100),3),"%",
                   ", Median=",round(median(data*100),3),"%",
@@ -509,8 +509,8 @@ abline(v = quantile(data, 0.975), col = "Black",lty = 3)
 abline(v = median(data), col = "Green",lty = 3)
 abline(v = mean(data), col = "Purple",lty = 3)
 abline(v = quantile(data, c(0.25, 0.75)), col = "Orange",lty = 3)
-boxplot(data, add=TRUE,horizontal=TRUE,at=-1.25,col = "lightgray",
-        border="black",boxwex=3.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
+boxplot(data, add=TRUE,horizontal=TRUE,at=-2.55,col = "lightgray",
+        border="black",boxwex=4.5,outline=TRUE,xlab="n", ylab="n",axes=FALSE)
 ```
 
 

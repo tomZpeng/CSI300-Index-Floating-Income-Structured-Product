@@ -52,4 +52,4 @@
 <br /> Product 2 total return distribution, simulated 10,000 times: 
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/product2_1.png?raw=ture)
 
-## Product 1 is better and simpler than Product 2. Total expected return for both are really low, not recommend to clients.
+## Product 1 is better and simpler than Product 2. Total expected return for both are really low, not recommend for clients.

@@ -41,7 +41,7 @@
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_vol_dist2.png?raw=ture)
 
 ## 
-# Products' Simulated Performance 
+# Products' Simulated Performance (Based on the random numbers from the Metalog distirbution)
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_random_walk12.png?raw=ture)
 
 ## 

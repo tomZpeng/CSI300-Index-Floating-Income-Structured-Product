@@ -35,10 +35,10 @@
       
 # CSI Index Overview 
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_hist.png?raw=ture) 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_hist_vol.png?raw=ture)
 ## 
 
 ![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_dist.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_vol_dist.png?raw=ture)
 
 ## 
 # Products' Simulated Performance 

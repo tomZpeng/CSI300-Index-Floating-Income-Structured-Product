@@ -34,22 +34,22 @@
 - Total return at matrity = Fixed rate of income + Floating rate of income
       
 # CSI Index Overview 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_hist.png?raw=ture) 
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_hist2.png?raw=ture) 
 ## 
 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_dist.png?raw=ture)
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_vol_dist.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_dist2.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_return_vol_dist2.png?raw=ture)
 
 ## 
 # Products' Simulated Performance 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_random_walk1.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/CSI300_random_walk12.png?raw=ture)
 
 ## 
 
 <br /> Product 1 total return distribution, simulated 10,000 times: 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/product1_1.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/product1_12.png?raw=ture)
 <br />
 <br /> Product 2 total return distribution, simulated 10,000 times: 
-![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/product2_1.png?raw=ture)
+![alt text](https://github.com/tomZpeng/CSI300-Index-Floating-Income-Structured-Product/blob/main/Pictures/product2_12.png?raw=ture)
 
 ## Product 1 is better and simpler than Product 2. Total expected return for both are really low, not recommend for clients.

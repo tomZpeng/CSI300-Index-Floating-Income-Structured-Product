@@ -1,5 +1,5 @@
-# Principal Protected Floating Income Strucured Product - CSI 300 Index 
-- Designed/Customized two principal protected CSI 300 Index floating income structured products (product 1 and 2), and use the actual distirbution to do Monte Carlo Simulation, then esimate the two products' distributions of the Total return at maturity. So financial advisors and clients can see what the profitability will be like. 
+# Principal Protected Floating Income Strucured Product - Linked CSI 300 Index 
+- Designed/Customized two principal protected CSI 300 Index linked floating income structured products (product 1 and 2), and use the actual distirbution to do Monte Carlo Simulation, then esimate the two products' distributions of the Total return at maturity. So financial advisors and clients can see what the profitability will be like. 
 - Data Source for CSI 300 Daily Price: Refinitiv, from 2005-01-04 to 2021-12-30. Attached EXCEL file.
 
 ## Product 1: 
